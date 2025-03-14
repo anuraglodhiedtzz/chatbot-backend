@@ -1,18 +1,18 @@
 {
   "name": "chatbot-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "A chatbot backend using Node.js and OpenAI API",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/anuraglodhiedtzz/chatbot-backend.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["chatbot", "nodejs", "openai", "backend"],
+  "author": "Anurag Lodhi",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/anuraglodhiedtzz/chatbot-backend/issues"
