@@ -11,22 +11,26 @@ router.post("/", async (req, res) => {
         const userMessage = req.body.message;
 
         const response = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
+            "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
             {
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: userMessage }],
+                contents: [{ parts: [{ text: userMessage }] }]
             },
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Using API Key from .env
+                },
+                params: {
+                    key: process.env.GEMINI_API_KEY, // Use Gemini API Key from .env
                 },
             }
         );
 
-        res.json({ reply: response.data.choices[0].message.content });
+        // Extract the reply from the Gemini API response
+        const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond.";
+        
+        res.json({ reply });
     } catch (error) {
-        console.error("Error communicating with OpenAI:", error.message);
+        console.error("Error communicating with Gemini:", error.message);
         res.status(500).json({ reply: "Sorry, something went wrong!" });
     }
 });
