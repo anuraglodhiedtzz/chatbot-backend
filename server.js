@@ -10,7 +10,7 @@ const app = express();
 
 // 🔥 FIX: Set up CORS to allow requests from your frontend
 const corsOptions = {
-    origin: "https://chatbot-ui-p5sz.vercel.app", // Allow only your frontend
+    origin: "*", // Allow only your frontend
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
 };
