@@ -6,7 +6,15 @@ import chatbotRoutes from "./routes/chatbot.js"; // Import chatbot routes
 dotenv.config(); // Load environment variables
 
 const app = express();
-app.use(cors());
+
+// 🔥 FIX: Set up CORS to allow requests from your frontend
+const corsOptions = {
+    origin: "https://chatbot-ui-p5sz.vercel.app", // Allow only your frontend
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // Use the chatbot route
