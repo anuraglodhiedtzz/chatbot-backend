@@ -16,23 +16,27 @@ app.post("/chat", async (req, res) => {
 
     try {
         const response = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
+            "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
             {
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: message }],
+                contents: [{ parts: [{ text: message }] }]
             },
             {
                 headers: {
-                    "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
                     "Content-Type": "application/json",
                 },
+                params: {
+                    key: process.env.GEMINI_API_KEY, // Use Gemini API Key from .env
+                }
             }
         );
 
-        res.json({ reply: response.data.choices[0].message.content });
+        const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond.";
+        res.json({ reply });
+
     } catch (error) {
-        res.status(500).json({ error: "Something went wrong!" });
+        console.error("Error communicating with Gemini:", error?.response?.data || error.message);
+        res.status(500).json({ error: "Something went wrong while contacting Gemini AI!" });
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
