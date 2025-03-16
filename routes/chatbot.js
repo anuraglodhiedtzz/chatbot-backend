@@ -25,13 +25,13 @@ router.post("/", async (req, res) => {
             }
         );
 
-        // Extract the reply from the Gemini API response
+        // ✅ Extract AI response
         const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond.";
         
         res.json({ reply });
     } catch (error) {
         console.error("Error communicating with Gemini:", error.message);
-        res.status(500).json({ reply: "Sorry, something went wrong!" });
+        res.status(500).json({ reply: "⚠️ Sorry, something went wrong!" });
     }
 });
 

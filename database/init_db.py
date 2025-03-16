@@ -1,31 +1,32 @@
 import sqlite3
 
-# Connect to SQLite database (creates the file if it doesn't exist)
-conn = sqlite3.connect("database/orders.db")
+# Connect to SQLite database (stores inside 'database/' folder)
+conn = sqlite3.connect("database/orders.db")  
 cursor = conn.cursor()
 
-# Create orders table if it doesn't exist
+# Create 'orders' table if it doesn't exist
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id TEXT UNIQUE NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    tracking_url TEXT DEFAULT 'Not Available'
 )
 """)
 
-# Insert some sample orders (You can modify these later)
+# Insert sample orders (Modify as needed)
 sample_orders = [
-    ("ORD123", "Shipped"),
-    ("ORD124", "In Transit"),
-    ("ORD125", "Delivered"),
-    ("ORD126", "Pending"),
+    ("ORD123", "Shipped", "http://track.com/ORD123"),
+    ("ORD124", "In Transit", "http://track.com/ORD124"),
+    ("ORD125", "Delivered", "http://track.com/ORD125"),
+    ("ORD126", "Pending", "http://track.com/ORD126"),
 ]
 
-# Insert orders into the table (ignore duplicates)
-cursor.executemany("INSERT OR IGNORE INTO orders (order_id, status) VALUES (?, ?)", sample_orders)
+# Insert only if they don’t already exist
+cursor.executemany("INSERT OR IGNORE INTO orders (order_id, status, tracking_url) VALUES (?, ?, ?) ", sample_orders)
 
-# Commit changes and close connection
+# Save and close
 conn.commit()
 conn.close()
 
-print("✅ Database initialized successfully with sample orders!")
+print("✅ Database initialized successfully!")

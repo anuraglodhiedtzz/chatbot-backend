@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 
+// CORS Configuration
 const corsOptions = {
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/chatbot", chatbotRoutes);
 
+// ✅ Establish Database Connection
 let db;
 (async () => {
     db = await open({
@@ -30,6 +32,7 @@ let db;
     console.log("📦 SQLite Database connected!");
 })();
 
+// ✅ Main Chat Endpoint
 app.post("/chat", async (req, res) => {
     const { message } = req.body;
     const intent = classifyIntent(message);
@@ -37,29 +40,36 @@ app.post("/chat", async (req, res) => {
 
     if (intent === "greeting") {
         return res.json({ reply: "Hello! How can I assist you today?" });
-    } else if (intent === "order_tracking") {
+    } 
+    else if (intent === "order_tracking") {
+        // Extract Order ID from user message
         const orderIDMatch = message.match(/\d+/);
         if (!orderIDMatch) {
             return res.json({ reply: "Please provide your order ID to track your order." });
         }
         const orderID = orderIDMatch[0];
+
         try {
+            // ✅ Fetch Order Details from Database
             const order = await db.get("SELECT * FROM orders WHERE order_id = ?", [orderID]);
+
             if (order) {
                 return res.json({
-                    reply: `Your order #${orderID} is currently '${order.status}'. Tracking link: ${order.tracking_url}`,
+                    reply: `📦 Your order #${orderID} is currently '${order.status}'. Track it here: ${order.tracking_url}`,
                 });
             } else {
-                return res.json({ reply: "No order found with this ID. Please check and try again." });
+                return res.json({ reply: "❌ No order found with this ID. Please check and try again." });
             }
         } catch (error) {
             console.error("Database error:", error);
-            return res.status(500).json({ reply: "Error retrieving order details. Try again later." });
+            return res.status(500).json({ reply: "⚠️ Error retrieving order details. Try again later." });
         }
-    } else if (intent === "faq") {
+    } 
+    else if (intent === "faq") {
         return res.json({ reply: "I can help with FAQs. What would you like to ask?" });
     }
 
+    // ✅ Default case - Send request to Gemini AI
     try {
         const response = await axios.post(
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
@@ -71,9 +81,10 @@ app.post("/chat", async (req, res) => {
         res.json({ reply });
     } catch (error) {
         console.error("Error communicating with Gemini:", error?.response?.data || error.message);
-        res.status(500).json({ error: "Something went wrong while contacting Gemini AI!" });
+        res.status(500).json({ error: "⚠️ Something went wrong while contacting Gemini AI!" });
     }
 });
 
+// ✅ Start Server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
