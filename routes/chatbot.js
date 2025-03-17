@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables
 
 const router = express.Router();
 
@@ -11,17 +11,11 @@ router.post("/", async (req, res) => {
         const userMessage = req.body.message;
 
         const response = await axios.post(
-            "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`,
+            { contents: [{ parts: [{ text: userMessage }] }] },
             {
-                contents: [{ parts: [{ text: userMessage }] }]
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                params: {
-                    key: process.env.GEMINI_API_KEY, // Use Gemini API Key from .env
-                },
+                headers: { "Content-Type": "application/json" },
+                params: { key: process.env.GEMINI_API_KEY },
             }
         );
 

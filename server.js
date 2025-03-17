@@ -41,13 +41,21 @@ app.post("/chat", async (req, res) => {
     if (intent === "greeting") {
         return res.json({ reply: "Hello! How can I assist you today?" });
     } 
-    else if (intent === "order_tracking") {
-        // Extract Order ID from user message
-        const orderIDMatch = message.match(/\d+/);
-        if (!orderIDMatch) {
+    else if (intent === "order_status") {  // ✅ Fixed intent name mismatch
+        if (!db) {
+            return res.status(500).json({ reply: "⚠️ Database is not available. Try again later." });
+        }
+
+        // ✅ Improved order ID extraction
+        const orderIDMatches = message.match(/\d+/g); // Extract all numbers
+        if (!orderIDMatches) {
             return res.json({ reply: "Please provide your order ID to track your order." });
         }
-        const orderID = orderIDMatch[0];
+        const orderID = orderIDMatches.length === 1 ? orderIDMatches[0] : null;
+
+        if (!orderID) {
+            return res.json({ reply: "I found multiple order numbers. Which one do you want to track?" });
+        }
 
         try {
             // ✅ Fetch Order Details from Database
