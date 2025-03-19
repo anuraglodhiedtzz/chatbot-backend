@@ -1,5 +1,5 @@
 import express from "express";
-import accessSpreadsheet from "../utils/googleSheets.js";
+import { accessSpreadsheet } from "../utils/googleSheets.js";  // Updated to use named export
 
 const router = express.Router();
 
