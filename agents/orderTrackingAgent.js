@@ -18,7 +18,7 @@ const orderTrackingAgent = async (message) => {
 
         if (orderDetails) {
             return {
-                reply: `📦 Your order #${orderID} is currently **'${orderDetails.status}'**. Track it here: ${orderDetails.trackingURL}`
+                reply: `📦 Your order **#${orderID}** is currently **'${orderDetails.status}'**. 🚚 Track it here: ${orderDetails.trackingURL}`
             };
         } else {
             return { reply: "❌ No order found with this ID. Please check and try again." };
