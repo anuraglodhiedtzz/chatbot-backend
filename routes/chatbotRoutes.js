@@ -14,8 +14,8 @@ router.post("/chat", async (req, res) => {
             return res.status(400).json({ reply: "❌ Please enter a valid message." });
         }
 
-        // ✅ Classify user intent
-        const intent = await classifyIntent(message);
+        // ✅ Classify user intent (Fixed function name)
+        const intent = await intentClassifier(message);
         let response;
 
         // ✅ Route message to the appropriate agent based on intent
