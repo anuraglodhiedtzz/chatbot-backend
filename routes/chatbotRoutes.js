@@ -1,5 +1,5 @@
 import express from "express";
-import classifyIntent from "../utils/intentClassifier.js";
+import intentClassifier from '../intentClassifier.js'; // Adjust the path to go up to the root directory
 import orderTrackingAgent from "../agents/orderTrackingAgent.js";
 
 const router = express.Router();
