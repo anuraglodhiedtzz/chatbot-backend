@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import chatbotRouter from "./routes/chatbotRoutes.js"; // ✅ Fixed typo in import
-import googleSheetsRouter from "./routes/googleSheetsRoutes.js"; // ✅ Added Google Sheets routes
+import intentClassifier from "./intentClassifier.js"; // ✅ Updated to use the new intent classifier
+import googleSheetsRouter from "./routes/googleSheetsRoutes.js"; // ✅ Google Sheets API routes
 import bodyParser from "body-parser";
 
 dotenv.config();
@@ -15,7 +15,7 @@ app.use(cors()); // Allow cross-origin requests
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // ✅ Routes
-app.use("/api/chatbot", chatbotRouter); // Main chatbot route
+app.use("/api/chatbot", intentClassifier); // ✅ Use the new intentClassifier for chatbot processing
 app.use("/api/google-sheets", googleSheetsRouter); // ✅ Google Sheets API routes
 
 // ✅ Default Route

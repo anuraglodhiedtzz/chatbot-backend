@@ -1,32 +1,63 @@
-import natural from "natural";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import orderTrackingAgent from "../agents/orderTrackingAgent.js";
+import dotenv from "dotenv";
 
-const tokenizer = new natural.WordTokenizer();
+dotenv.config();
 
-// ✅ Define intents and their keyword patterns
-const intents = {
-    greeting: ["hello", "hi", "hey", "greetings"],
-    order_status: ["order", "track", "tracking", "shipment", "delivered"],
-    faq: ["how", "what", "why", "when", "where", "faq", "question"],
-    product_recommendation: ["recommend", "suggest", "buy", "best"],
-    payment: ["pay", "payment", "refund", "price", "cost"],
-    memory: ["remember", "recall", "save", "note"]
-};
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 /**
- * Classifies the intent of a given message.
- * @param {string} message - The user message.
- * @returns {Promise<string>} - The classified intent.
+ * Classifies intent and extracts order ID if present.
+ * @param {string} message - The user's message.
+ * @returns {Promise<Object>} - The response object.
  */
 const classifyIntent = async (message) => {
-    const tokens = tokenizer.tokenize(message.toLowerCase());
-
-    for (const [intent, keywords] of Object.entries(intents)) {
-        if (tokens.some(token => keywords.includes(token))) {
-            return intent;
+    try {
+        // ✅ Step 1: Check if message is JUST an order ID (numbers only)
+        const onlyNumbers = message.trim().match(/^\d+$/);
+        if (onlyNumbers) {
+            return await orderTrackingAgent(onlyNumbers[0]);
         }
-    }
 
-    return "unknown"; // Default if no intent is matched
+        // ✅ Step 2: Gemini AI Prompt
+        const prompt = `Classify the user's intent and extract the order ID if present.
+        Supported intents: order_status, greeting, faq, product_recommendation, payment, memory.
+        If order ID is missing for order_status, reply with "ask_for_order_id".
+        Respond with a JSON object like: {"intent": "order_status", "orderID": "123456"}`;
+
+        const result = await model.generateContent(`${prompt}\nUser: ${message}\nAI:`);
+        const aiResponse = await result.response.text();
+
+        // ✅ Step 3: Parse Gemini response
+        let intent, orderID;
+        try {
+            const parsedResponse = JSON.parse(aiResponse);
+            intent = parsedResponse.intent || "unknown";
+            orderID = parsedResponse.orderID || null;
+        } catch (error) {
+            console.error("❌ Gemini JSON Parsing Error:", error);
+            return { reply: "⚠️ AI response was invalid. Try again later." };
+        }
+
+        // ✅ Step 4: Handle Order Tracking
+        if (intent === "order_status" && orderID) {
+            return await orderTrackingAgent(orderID);
+        }
+        if (intent === "order_status" && !orderID) {
+            return { reply: "❌ Please provide your order ID so I can track it for you!" };
+        }
+
+        // ✅ Step 5: Handle other intents
+        if (intent === "greeting") {
+            return { reply: "👋 Hello! How can I assist you today?" };
+        }
+
+        return { reply: "🤖 I'm still learning! Ask me something else." };
+    } catch (error) {
+        console.error("❌ Intent Classifier Error:", error);
+        return { reply: "⚠️ Something went wrong. Try again later." };
+    }
 };
 
 export default classifyIntent;
