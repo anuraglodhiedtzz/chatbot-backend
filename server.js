@@ -5,6 +5,9 @@ import intentClassifier from "./intentClassifier.js"; // ✅ Updated to use the 
 import googleSheetsRouter from "./routes/googleSheetsRoutes.js"; // ✅ Google Sheets API routes
 import bodyParser from "body-parser";
 
+// ✅ Import orderTrackingAgent.js to ensure it's loaded
+import "./agents/orderTrackingAgent.js"; 
+
 dotenv.config();
 
 const app = express();
