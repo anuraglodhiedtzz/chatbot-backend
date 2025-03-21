@@ -20,16 +20,20 @@ const classifyIntent = async (message) => {
             return await orderTrackingAgent(onlyNumbers[0]);
         }
 
-        // ✅ Step 2: Gemini AI Prompt
+        // ✅ Step 2: Gemini AI Prompt (STRICT JSON)
         const prompt = `Classify the user's intent and extract the order ID if present.
         Supported intents: order_status, greeting, faq, product_recommendation, payment, memory.
-        If order ID is missing for order_status, reply with "ask_for_order_id".
-        Respond with a JSON object like: {"intent": "order_status", "orderID": "123456"}`;
+        If order ID is missing for order_status, reply with {"intent": "ask_for_order_id"}.
+        Respond **ONLY** with a valid JSON object, no explanations. Example:
+        {"intent": "order_status", "orderID": "123456"}`;
 
         const result = await model.generateContent(`${prompt}\nUser: ${message}\nAI:`);
         const aiResponse = await result.response.text();
 
-        // ✅ Step 3: Parse Gemini response
+        // ✅ Log raw AI response (to debug if needed)
+        console.log("🛠️ Raw AI Response:", aiResponse);
+
+        // ✅ Step 3: Parse Gemini response safely
         let intent, orderID;
         try {
             const parsedResponse = JSON.parse(aiResponse);
@@ -44,7 +48,7 @@ const classifyIntent = async (message) => {
         if (intent === "order_status" && orderID) {
             return await orderTrackingAgent(orderID);
         }
-        if (intent === "order_status" && !orderID) {
+        if (intent === "ask_for_order_id") {
             return { reply: "❌ Please provide your order ID so I can track it for you!" };
         }
 
