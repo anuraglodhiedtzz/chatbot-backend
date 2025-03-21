@@ -6,21 +6,20 @@ dotenv.config();
 
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
 
-// ✅ Authenticate with Google Sheets (Fixed)
-const serviceAccountAuth = new JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
+// 📌 Authenticate using service account
+const serviceAccountAuth = {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+};
 
-// 📌 Connect to Google Sheets
+// ✅ Connect to Google Sheets (Fixed)
 export const accessSpreadsheet = async () => {
-    await doc.authenticate(serviceAccountAuth);  // ✅ FIXED
+    await doc.useServiceAccountAuth(serviceAccountAuth);  // ✅ FIXED
     await doc.loadInfo();
     return doc.sheetsByIndex[0]; // Assuming orders are in the first sheet
 };
 
-// ✅ Get Order Details
+// ✅ Get Order Details (Fixed)
 export const getOrderDetails = async (orderID) => {
     try {
         const sheet = await accessSpreadsheet();
