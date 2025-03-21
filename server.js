@@ -18,7 +18,18 @@ app.use(cors()); // Allow cross-origin requests
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // ✅ Routes
-app.use("/api/chatbot", intentClassifier); // ✅ Use the new intentClassifier for chatbot processing
+app.post("/api/chatbot", async (req, res) => {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: "Message is required" });
+
+    try {
+        const response = await intentClassifier(message);
+        res.json(response);
+    } catch (error) {
+        console.error("❌ Error in chatbot route:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 app.use("/api/google-sheets", googleSheetsRouter); // ✅ Google Sheets API routes
 
 // ✅ Default Route
