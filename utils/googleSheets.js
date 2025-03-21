@@ -13,7 +13,7 @@ const serviceAccountAuth = new JWT({
 
 // 📌 Connect to Google Sheets
 export const accessSpreadsheet = async () => {
-    await doc.useJwtAuth(serviceAccountAuth);
+    await doc.auth.getClient(serviceAccountAuth);
     await doc.loadInfo();
     return doc.sheetsByIndex[0]; // Assuming orders are in the first sheet
 };
