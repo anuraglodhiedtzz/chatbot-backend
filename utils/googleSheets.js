@@ -6,20 +6,21 @@ dotenv.config();
 
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
 
-// 📌 Authenticate using service account
-const serviceAccountAuth = {
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-};
+// ✅ Authenticate using Google JWT
+const auth = new JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+});
 
-// ✅ Connect to Google Sheets (Fixed)
+// ✅ Connect to Google Sheets
 export const accessSpreadsheet = async () => {
-    await doc.useServiceAccountAuth(serviceAccountAuth);  // ✅ FIXED
+    await doc.useServiceAccountAuth(auth);
     await doc.loadInfo();
-    return doc.sheetsByIndex[0]; // Assuming orders are in the first sheet
+    return doc.sheetsByIndex[0]; // First sheet
 };
 
-// ✅ Get Order Details (Fixed)
+// ✅ Fetch Order Details
 export const getOrderDetails = async (orderID) => {
     try {
         const sheet = await accessSpreadsheet();
@@ -32,7 +33,7 @@ export const getOrderDetails = async (orderID) => {
                 trackingURL: order.TrackingURL || "🔗 No tracking URL available."
             };
         }
-        return null; // No matching order found
+        return null;
     } catch (error) {
         console.error("❌ Error fetching order details:", error);
         return null;
