@@ -36,7 +36,8 @@ const classifyIntent = async (message) => {
         // ✅ Step 3: Parse Gemini response safely
         let intent, orderID;
         try {
-            const parsedResponse = JSON.parse(aiResponse);
+            const cleanedResponse = aiResponse.trim().replace(/^```json|```$/g, ""); // Remove backticks
+            const parsedResponse = JSON.parse(cleanedResponse);
             intent = parsedResponse.intent || "unknown";
             orderID = parsedResponse.orderID || null;
         } catch (error) {
