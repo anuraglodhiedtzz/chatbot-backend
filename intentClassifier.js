@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import orderTrackingAgent from "../agents/orderTrackingAgent.js";
+import orderTrackingAgent from "./agents/orderTrackingAgent.js"; // ✅ Corrected path
 import dotenv from "dotenv";
 
 dotenv.config();
