@@ -1,0 +1,11 @@
+order_id,customer_name,product_name,status,address,price,tracking_url
+1001,Anurag Lodhi,iPhone 15 Pro Max,Shipped,"Gwalior, MP",149900,track.com/order1001
+1002,Jeon Jerry,MacBook Air M2,Delivered,"Seoul, South Korea",114900,track.com/order1002
+1003,Rohan Mehta,Samsung S24 Ultra,Processing,"Mumbai, MH",134999,track.com/order1003
+1004,Priya Sharma,Sony WH-1000XM5,Out for Delivery,"Delhi, DL",29999,track.com/order1004
+1005,Aditya Verma,PlayStation 5,Shipped,"Bangalore, KA",54999,track.com/order1005
+1006,Nisha Gupta,Apple Watch Ultra 2,Delivered,"Hyderabad, TS",89999,track.com/order1006
+1007,Varun Kapoor,Bose SoundLink,Processing,"Chandigarh, PB",12999,track.com/order1007
+1008,Simran Kaur,Asus ROG Zephyrus G14,Shipped,"Pune, MH",184999,track.com/order1008
+1009,Raj Malhotra,DJI Mini 3 Drone,Out for Delivery,"Jaipur, RJ",79999,track.com/order1009
+1010,Kavita Joshi,Kindle Paperwhite,Delivered,"Lucknow, UP",13999,track.com/order1010
