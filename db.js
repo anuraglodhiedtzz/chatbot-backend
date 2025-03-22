@@ -1,9 +1,13 @@
-import sqlite3 from "sqlite3"; // ✅ Correct
-import { open } from "sqlite"; // ✅ Required for Promises
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
 
-const db = await open({
-    filename: "./orders.db",
-    driver: sqlite3.Database,
-});
+async function initDB() {
+    return await open({
+        filename: "./orders.db",
+        driver: sqlite3.Database,
+    });
+}
+
+const db = await initDB(); // ✅ Now inside a function
 
 export default db;
